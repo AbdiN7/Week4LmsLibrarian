@@ -2,7 +2,10 @@ package com.ss.lms;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
+
+@EnableEurekaClient
 @SpringBootApplication
 public class LmsApplication {
 
@@ -10,5 +13,4 @@ public class LmsApplication {
 		System.out.println("Hello there");
 		SpringApplication.run(LmsApplication.class, args);
 	}
-
 }

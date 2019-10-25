@@ -11,7 +11,7 @@ import com.ss.lms.dao.LibraryBranchDataAccess;
 import com.ss.lms.entity.Book;
 import com.ss.lms.entity.BookCopy;
 import com.ss.lms.entity.LibraryBranch;
-import com.ss.lms.entity.BookCopyId;
+import com.ss.lms.entity.BookCopyCompositeKey;
 
 @Component
 public class UserLibrarian {
@@ -62,7 +62,7 @@ public class UserLibrarian {
 		return bookCopyDao.findAll();
 	}
 	
-	public Optional<BookCopy> readBookCopyById(BookCopyId bookCopyId) {
+	public Optional<BookCopy> readBookCopyById(BookCopyCompositeKey bookCopyId) {
 		return bookCopyDao.findById(bookCopyId);
 	}
 
@@ -79,8 +79,8 @@ public class UserLibrarian {
 	}
 
 	
-	public void deleteBookCopy(int bookId, int branchId) {
-		bookCopyDao.deleteById(new BookCopyId(bookId, branchId));
+	public void deleteBookCopy(BookCopyCompositeKey bookCopyId) {
+		bookCopyDao.deleteById(bookCopyId);
 
 	}
 
