@@ -31,6 +31,12 @@ public class LibrarianController {
 	@Autowired
 	UserLibrarian userLibrarian;
 
+	@GetMapping(path = "")
+    public HttpStatus isUp() 
+    {
+        return HttpStatus.OK;
+    }
+	
 	@PostMapping(value = "/bookcopy",consumes = {"application/xml", "application/json"},
 										produces = {"application/xml", "application/json"})
 	public ResponseEntity<BookCopy> createBookCopy(@RequestBody BookCopy bookCopy) {
