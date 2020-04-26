@@ -14,5 +14,4 @@ import com.ss.lms.entity.Book;
  */
 @Component
 public interface BookDataAccess extends CrudRepository<Book, Integer>{
-
 }
