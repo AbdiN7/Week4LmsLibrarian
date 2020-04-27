@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import com.ss.lms.entity.BookCopyCompositeKey;
 import com.ss.lms.service.UserLibrarian;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "/lms/librarian")
 public class LibrarianController {
 
@@ -95,6 +97,16 @@ public class LibrarianController {
 		Iterable<LibraryBranch> branches = userLibrarian.readAllLibraryBranches();
 		if (branches.iterator().hasNext()) {
 			return new ResponseEntity<Iterable<LibraryBranch>>(branches, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+	
+	// Reading all the book copies in the table
+	@GetMapping(path = "/bookcopies",produces = {"application/xml", "application/json"})
+	public ResponseEntity<Iterable<BookCopy>> readAllBookCopies() {
+		Iterable<BookCopy> branches = userLibrarian.readAllBookCopies();
+		if (branches.iterator().hasNext()) {
+			return new ResponseEntity<Iterable<BookCopy>>(branches, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
