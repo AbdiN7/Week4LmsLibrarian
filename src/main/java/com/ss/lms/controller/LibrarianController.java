@@ -42,7 +42,7 @@ public class LibrarianController {
 	@PostMapping(value = "/bookcopy",consumes = {"application/xml", "application/json"},
 										produces = {"application/xml", "application/json"})
 	public ResponseEntity<BookCopy> createBookCopy(@RequestBody BookCopy bookCopy) {
-		
+		System.out.println("\n\n" +bookCopy.toString() + "\n\n");
 		//Checks if the bookId is present
 		if (userLibrarian.readBookCopyById(bookCopy.getBookCopyKey())
 				.isPresent()) {
@@ -55,6 +55,7 @@ public class LibrarianController {
 			return new ResponseEntity<BookCopy>(HttpStatus.BAD_REQUEST);
 		}
 		userLibrarian.createBookCopy(bookCopy);
+		System.out.println("Trying to create a new bookCopyId here ------->");
 		BookCopyCompositeKey bookCopyId = new BookCopyCompositeKey(
 												userLibrarian
 													.readBookById(bookCopy.getBookCopyKey().getBranch().getBranchId())
@@ -62,9 +63,11 @@ public class LibrarianController {
 												userLibrarian
 													.readLibraryBranchById(bookCopy.getBookCopyKey().getBook().getBookId())
 													.get());
-		
-		bookCopy = userLibrarian.readBookCopyById(bookCopyId).get();
+//		System.out.println("////////The id: " + bookCopyId.toString() + "\n\n\n\n");
+//		bookCopy = userLibrarian.readBookCopyById(bookCopyId).get();
+//		System.out.println("[[[[[[[[[Book copy before set" + bookCopy.toString() + "\n\n\n\n");
 		bookCopy.setBookCopyKey(bookCopyId);
+		System.out.println("=========After set" + bookCopy.toString() + "\n\n\n\n");
 		return new ResponseEntity<BookCopy>(bookCopy, HttpStatus.CREATED);
 		// Code 201
 	}
@@ -162,9 +165,9 @@ public class LibrarianController {
 	
 	// Reading a single libraryBranch by its id
 	// Returns a response entity with
-	@GetMapping(value = "/branch/name/{name}",produces = {"application/xml", "application/json"})
-	public ResponseEntity<Iterable<LibraryBranch>> readAllBookCopiesByBranch(@PathVariable String BranchName) {
-		Iterable<LibraryBranch> bookCopies = userLibrarian.readAllLibraryBranchesByName(BranchName);
+	@GetMapping(value = "/branch/name/{branchName}",produces = {"application/xml", "application/json"})
+	public ResponseEntity<Iterable<LibraryBranch>> readAllBookCopiesByBranch(@PathVariable String branchName) {
+		Iterable<LibraryBranch> bookCopies = userLibrarian.readAllLibraryBranchesByName(branchName);
 		System.out.println("\n\nThe branches are: " + bookCopies + "\n\n");
 		if (bookCopies.iterator().hasNext()) {
 			return new ResponseEntity<Iterable<LibraryBranch>>(bookCopies, HttpStatus.OK);

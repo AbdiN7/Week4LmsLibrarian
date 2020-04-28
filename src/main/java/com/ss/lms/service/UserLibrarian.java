@@ -101,6 +101,8 @@ public class UserLibrarian {
 	}
 	
 	public Optional<BookCopy> readBookCopyById(BookCopyCompositeKey bookCopyId) {
+		System.out.println("Trying to find by id: ");
+		System.out.println("00000000000000" + bookCopyDao.findById(bookCopyId));
 		return bookCopyDao.findById(bookCopyId);
 	}
 
