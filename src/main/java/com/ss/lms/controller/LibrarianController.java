@@ -58,10 +58,10 @@ public class LibrarianController {
 		System.out.println("Trying to create a new bookCopyId here ------->");
 		BookCopyCompositeKey bookCopyId = new BookCopyCompositeKey(
 												userLibrarian
-													.readBookById(bookCopy.getBookCopyKey().getBranch().getBranchId())
+													.readBookById(bookCopy.getBookCopyKey().getBook().getBookId())
 													.get(),
 												userLibrarian
-													.readLibraryBranchById(bookCopy.getBookCopyKey().getBook().getBookId())
+													.readLibraryBranchById(bookCopy.getBookCopyKey().getBranch().getBranchId())
 													.get());
 //		System.out.println("////////The id: " + bookCopyId.toString() + "\n\n\n\n");
 //		bookCopy = userLibrarian.readBookCopyById(bookCopyId).get();
