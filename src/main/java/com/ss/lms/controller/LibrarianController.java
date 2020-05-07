@@ -27,6 +27,7 @@ import com.ss.lms.service.UserLibrarian;
 @RestController
 @CrossOrigin
 @RequestMapping(path = "/lms/librarian")
+@CrossOrigin
 public class LibrarianController {
 
 	// carry it out.
@@ -42,7 +43,7 @@ public class LibrarianController {
 	@PostMapping(value = "/bookcopy",consumes = {"application/xml", "application/json"},
 										produces = {"application/xml", "application/json"})
 	public ResponseEntity<BookCopy> createBookCopy(@RequestBody BookCopy bookCopy) {
-		
+		System.out.println("\n\n" +bookCopy.toString() + "\n\n");
 		//Checks if the bookId is present
 		if (userLibrarian.readBookCopyById(bookCopy.getBookCopyKey())
 				.isPresent()) {
@@ -55,16 +56,19 @@ public class LibrarianController {
 			return new ResponseEntity<BookCopy>(HttpStatus.BAD_REQUEST);
 		}
 		userLibrarian.createBookCopy(bookCopy);
+		System.out.println("Trying to create a new bookCopyId here ------->");
 		BookCopyCompositeKey bookCopyId = new BookCopyCompositeKey(
 												userLibrarian
-													.readBookById(bookCopy.getBookCopyKey().getBranch().getBranchId())
+													.readBookById(bookCopy.getBookCopyKey().getBook().getBookId())
 													.get(),
 												userLibrarian
-													.readLibraryBranchById(bookCopy.getBookCopyKey().getBook().getBookId())
+													.readLibraryBranchById(bookCopy.getBookCopyKey().getBranch().getBranchId())
 													.get());
-		
-		bookCopy = userLibrarian.readBookCopyById(bookCopyId).get();
+//		System.out.println("////////The id: " + bookCopyId.toString() + "\n\n\n\n");
+//		bookCopy = userLibrarian.readBookCopyById(bookCopyId).get();
+//		System.out.println("[[[[[[[[[Book copy before set" + bookCopy.toString() + "\n\n\n\n");
 		bookCopy.setBookCopyKey(bookCopyId);
+		System.out.println("=========After set" + bookCopy.toString() + "\n\n\n\n");
 		return new ResponseEntity<BookCopy>(bookCopy, HttpStatus.CREATED);
 		// Code 201
 	}
@@ -89,6 +93,28 @@ public class LibrarianController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<Book>(book.get(), HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/book/title/",produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<Iterable<Book>> readAllBook() {
+		Iterable<Book> books = userLibrarian.readAllBooks();
+		if (!books.iterator().hasNext()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<Iterable<Book>>(books, HttpStatus.OK);
+		// return userLibrarian.readAllBooks();
+	}
+	
+	// Reading a single book by its id
+	@GetMapping(path = "/book/title/{title}",produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<Iterable<Book>> readBooksByTitle(@PathVariable String title, @RequestHeader MultiValueMap<String, String> header) {
+		Iterable<Book> books = userLibrarian.readBooksByTitle(title);
+		if (!books.iterator().hasNext()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<Iterable<Book>>(books, HttpStatus.OK);
 	}
 
 	// Reading all the libraryBranches in the table
@@ -123,6 +149,44 @@ public class LibrarianController {
 		return new ResponseEntity<Optional<LibraryBranch>>(libraryBranch, HttpStatus.OK);
 	}
 
+	// Reading a single libraryBranch by its id
+	// Returns a response entity with
+	@GetMapping(value = "/bookcopy/branch/{BranchName}",produces = {"application/xml", "application/json"})
+	public ResponseEntity<Iterable<BookCopy>> readAllLibraryBranchesByName(@PathVariable String BranchName) {
+		Iterable<BookCopy> branches = userLibrarian.readAllBookCopiesByBranchName(BranchName);
+		System.out.println("\n\nThe branches are: " + branches + "\n\n");
+		if (branches.iterator().hasNext()) {
+			return new ResponseEntity<Iterable<BookCopy>>(branches, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+	
+	// Reading a single libraryBranch by its id
+	// Returns a response entity with
+	@GetMapping(value = "/bookcopy/branch/",produces = {"application/xml", "application/json"})
+	public ResponseEntity<Iterable<BookCopy>> readAllBookCopyByName() {
+		Iterable<BookCopy> branches = userLibrarian.readAllBookCopies();
+		if (branches.iterator().hasNext()) {
+			return new ResponseEntity<Iterable<BookCopy>>(branches, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+	
+	
+	
+	// Reading a single libraryBranch by its id
+	// Returns a response entity with
+	@GetMapping(value = "/branch/name/{branchName}",produces = {"application/xml", "application/json"})
+	public ResponseEntity<Iterable<LibraryBranch>> readAllBookCopiesByBranch(@PathVariable String branchName) {
+		Iterable<LibraryBranch> bookCopies = userLibrarian.readAllLibraryBranchesByName(branchName);
+		System.out.println("\n\nThe branches are: " + bookCopies + "\n\n");
+		if (bookCopies.iterator().hasNext()) {
+			return new ResponseEntity<Iterable<LibraryBranch>>(bookCopies, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+	
+	
 	// Gets id from URI params
 	// Reading a book copy by its bookId and its branchId
 	@GetMapping(path = "/bookcopy/book/{bookId}/branch/{branchId}",produces = {"application/xml", "application/json"})
@@ -139,7 +203,18 @@ public class LibrarianController {
 		//Returns 200 if is passes constraints
 		return new ResponseEntity<BookCopy>(bookCopy.get(), HttpStatus.OK);
 	}
+	
 
+	// Reading all the BookCopies in the table
+	@GetMapping(path = "/bookcopies",produces = {"application/xml", "application/json"})
+	public ResponseEntity<Iterable<BookCopy>> readAllBookCopies() {
+		Iterable<BookCopy> bookCopies = userLibrarian.readAllBookCopies();
+		if (bookCopies.iterator().hasNext()) {
+			return new ResponseEntity<Iterable<BookCopy>>(bookCopies, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+	
 	//Put request for updating a library branch
 	//Gets the ids both from the json object and the URI
 	//returns the corresponding httpstatus
@@ -165,7 +240,6 @@ public class LibrarianController {
 
 		return new ResponseEntity<LibraryBranch>(libraryBranch, HttpStatus.OK);
 	}
-
 	
 	//Put request for updating a book copy
 	//Gets the ids both from the json object and the URI
