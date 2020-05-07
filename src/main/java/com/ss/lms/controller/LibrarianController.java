@@ -25,7 +25,6 @@ import com.ss.lms.entity.BookCopyCompositeKey;
 import com.ss.lms.service.UserLibrarian;
 
 @RestController
-@CrossOrigin
 @RequestMapping(path = "/lms/librarian")
 @CrossOrigin
 public class LibrarianController {
@@ -127,16 +126,6 @@ public class LibrarianController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 	
-	// Reading all the book copies in the table
-	@GetMapping(path = "/bookcopies",produces = {"application/xml", "application/json"})
-	public ResponseEntity<Iterable<BookCopy>> readAllBookCopies() {
-		Iterable<BookCopy> branches = userLibrarian.readAllBookCopies();
-		if (branches.iterator().hasNext()) {
-			return new ResponseEntity<Iterable<BookCopy>>(branches, HttpStatus.OK);
-		}
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	}
-
 	// Reading a single libraryBranch by its id
 	// Returns a response entity with
 	@GetMapping(value = "/branch/{branchId}",produces = {"application/xml", "application/json"})
